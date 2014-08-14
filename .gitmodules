@@ -1,0 +1,3 @@
+[submodule "lua/vstruct"]
+	path = lua/vstruct
+	url = https://github.com/ToxicFrog/vstruct.git

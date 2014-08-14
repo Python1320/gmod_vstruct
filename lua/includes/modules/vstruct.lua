@@ -3,7 +3,7 @@ local vstruct={}
 _G.vstruct=vstruct
 
 local package={
-	loaded = {ffi=ffi or {abi=function() return	true end},jit=jit},
+	loaded = {ffi=ffi or {abi=function() return	false end},jit=jit},
 	preload = {},
 }
 

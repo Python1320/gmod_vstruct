@@ -21,21 +21,29 @@ env.require = function(what)
 	if rawget(_G,what)~=nil then
 		return _G[what]
 	end
-		
+	
+	
+
+	local func
+	
 	if rawget(package.preload,what)~=nil then
-		return package.preload[what]
+		func = package.preload[what]
+	else
+		
+		local path = "vstruct/"..what:gsub("%.","/")..'.lua'
+		if not file.Exists(path,'LUA') then
+			path = "vstruct/"..what:gsub("%.","/")..'/init.lua'
+		end
+	
+		func = CompileFile(path,false)
+		
 	end
 	
 	
-	local path = "vstruct/"..what:gsub("%.","/")..'.lua'
-	if not file.Exists(path,'LUA') then
-		path = "vstruct/"..what:gsub("%.","/")..'/init.lua'
-	end
-	local f = CompileFile(path,false)
 	
-	setfenv(f,env)
+	setfenv(func,env)
 	
-	local ret = f(what)
+	local ret = func(what)
 	rawset(vstruct,what,ret)
 	
 	G.AddCSLuaFile(path)

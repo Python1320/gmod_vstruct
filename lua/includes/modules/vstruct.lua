@@ -37,6 +37,12 @@ env.require = function(what)
 	
 		func = CompileFile(path,false)
 		
+		if not func then error"uh" end
+
+		if G.vstruct_noaddcslua ~= true then
+			G.AddCSLuaFile(path)
+		end
+		
 	end
 	
 	
@@ -46,7 +52,6 @@ env.require = function(what)
 	local ret = func(what)
 	rawset(vstruct,what,ret)
 	
-	G.AddCSLuaFile(path)
 	
 	return ret
 	
@@ -55,7 +60,10 @@ end
 
 
 setfenv(env.require,env)
-G.AddCSLuaFile()
+if G.vstruct_noaddcslua ~= true then
+	G.AddCSLuaFile()
+end
+
 setfenv(1,env)
 
 require'vstruct'

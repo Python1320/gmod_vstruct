@@ -82,7 +82,7 @@ G.vstruct.SendToClients = SERVER and function()
 			local fil=file.Find('lua/'..pf..fold..'/'.."*.lua",'GAME')
 			for _,fil in next,fil do
 				if fil:find"%.lua$" then
-					addcs(pf..fil)
+					addcs(pf..fold..'/'..fil)
 				end
 			end
 		end

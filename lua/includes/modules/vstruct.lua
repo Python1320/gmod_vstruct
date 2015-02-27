@@ -1,7 +1,7 @@
 local G=_G
+local addcs=AddCSLuaFile
 local vstruct={}
 _G.vstruct=vstruct
-
 local package={
 	loaded = {ffi=ffi or {abi=function() return	false end},jit=jit},
 	preload = {},
@@ -26,21 +26,21 @@ env.require = function(what)
 
 	local func
 	
-	if rawget(package.preload,what)~=nil then
+	if G.rawget(package.preload,what)~=nil then
 		func = package.preload[what]
 	else
 		
 		local path = "vstruct/"..what:gsub("%.","/")..'.lua'
-		if not file.Exists(path,'LUA') then
+		if not G.file.Exists(path,'LUA') then
 			path = "vstruct/"..what:gsub("%.","/")..'/init.lua'
 		end
 	
-		func = CompileFile(path,false)
+		func = G.CompileFile(path,false)
 		
-		if not func then error"uh" end
+		if not func then G.error("vstruct module '"..G.tostring(what).."' not found") end
 
-		if G.vstruct_noaddcslua ~= true then
-			G.AddCSLuaFile(path)
+		if SERVER and G.vstruct_noaddcslua ~= true then
+			addcs(path)
 		end
 		
 	end
@@ -60,8 +60,8 @@ end
 
 
 setfenv(env.require,env)
-if G.vstruct_noaddcslua ~= true then
-	G.AddCSLuaFile()
+if SERVER and G.vstruct_noaddcslua ~= true then
+	addcs()
 end
 
 setfenv(1,env)
@@ -69,5 +69,23 @@ setfenv(1,env)
 require'vstruct'
 G.vstruct=package.loaded.vstruct
 G.package.loaded.vstruct=package.loaded.vstruct
-
+G.vstruct.SendToClients = SERVER and function()
+	local pf = 'vstruct/vstruct/'
+	local fil,fold=file.Find('lua/'..pf.."*.*",'GAME')
+	for _,fil in next,fil do
+		if fil:find"%.lua$" then
+			addcs(pf..fil)
+		end
+	end
+	for _,fold in next,fold do
+		if fold~="test" and not fold:find(".",1,true) then
+			local fil=file.Find('lua/'..pf..fold..'/'.."*.lua",'GAME')
+			for _,fil in next,fil do
+				if fil:find"%.lua$" then
+					addcs(pf..fil)
+				end
+			end
+		end
+	end
+end
 return package.loaded.vstruct

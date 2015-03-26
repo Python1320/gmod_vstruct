@@ -1,4 +1,5 @@
 local G=_G
+local MENU_DLL=MENU_DLL
 local addcs=AddCSLuaFile
 local vstruct={}
 _G.vstruct=vstruct
@@ -31,7 +32,7 @@ env.require = function(what)
 	else
 		
 		local path = "vstruct/"..what:gsub("%.","/")..'.lua'
-		if not G.file.Exists(path,'LUA') then
+		if not G.file.Exists(path,MENU_DLL and 'LuaMenu' or 'LUA') then
 			path = "vstruct/"..what:gsub("%.","/")..'/init.lua'
 		end
 	

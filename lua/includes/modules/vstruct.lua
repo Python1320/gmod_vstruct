@@ -8,6 +8,69 @@ local package={
 	preload = {},
 }
 
+-- Minimal file wrapper for gmod files, like cursor.lua
+local FILE={
+
+	read=function(fd,len)
+		fd=fd[1]
+		local pos = fd:Tell()
+		local sz = fd:Size()
+		
+		if pos>=sz then return nil,"eof" end
+		
+		return fd:Read(len)
+	end,
+	
+	write=function(fd,dat)
+		fd=fd[1]
+		fd:Write(dat)
+		return true 
+	end,
+	
+	close=function(fdd)
+		local fd=fdd[1]
+		fdd[1] = nil
+		fd:Close()
+		return true
+	end,
+	seek=function(fd,whence,pos)
+		fd=fd[1]
+		
+		whence = whence or "cur"
+		offset = offset or 0
+		if whence == "set" then
+			-- nop
+		elseif whence == "cur" then
+			pos = pos + fd:Tell()
+		elseif whence == "end" then
+			pos = pos + fd:Size()
+		else
+			error "bad argument #1 to seek"
+		end
+		if pos < 0 then
+			return nil,"attempt to seek prior to start of file"
+		end
+		
+		fd:Seek(pos)
+		
+		return fd:Tell()
+	end,
+	
+	
+	
+	tell = function(fd)
+		fd=fd[1]
+		return fd:Tell()
+	end,
+}
+local META={__index=FILE}
+local function wrapfile(f)
+	local t=setmetatable({f},META)
+	return t
+end
+vstruct.wrapfile = wrapfile
+
+
 local env = setmetatable({vstruct=vstruct,_G=vstruct,package=package},{__index=G})
 env.require = function(what)
 	

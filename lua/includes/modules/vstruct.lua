@@ -8,6 +8,28 @@ local package={
 	preload = {},
 }
 
+-- add all files
+local added
+local function requireallcs()
+	
+	if added then return end
+	added=true
+	local path = 'vstruct/vstruct/io/'
+	for _,fn in next,(file.Find(path..'*.lua','LUA')) do
+		AddCSLuaFile(path..fn)
+	end
+	local path = 'vstruct/vstruct/ast/'
+	for _,fn in next,(file.Find(path..'*.lua','LUA')) do
+		AddCSLuaFile(path..fn)
+	end
+	local path = 'vstruct/vstruct/'
+	for _,fn in next,(file.Find(path..'*.lua','LUA')) do
+		if fn~="test.lua" and fn~="compat1x.lua" then
+			AddCSLuaFile(path..fn)
+		end
+	end
+end
+
 -- Minimal file wrapper for gmod files, like cursor.lua
 local FILE={
 
@@ -152,4 +174,11 @@ G.vstruct.SendToClients = SERVER and function()
 		end
 	end
 end
+
+G.vstruct.wrapfile = wrapfile
+
+if SERVER then
+	G.vstruct.requireallcs = requireallcs
+end
+
 return package.loaded.vstruct

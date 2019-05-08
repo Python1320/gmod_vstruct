@@ -14,15 +14,15 @@ local function requireallcs()
 	
 	if added then return end
 	added=true
-	local path = 'vstruct/vstruct/io/'
+	local path = 'vstruct/io/'
 	for _,fn in next,(file.Find(path..'*.lua','LUA')) do
 		AddCSLuaFile(path..fn)
 	end
-	local path = 'vstruct/vstruct/ast/'
+	local path = 'vstruct/ast/'
 	for _,fn in next,(file.Find(path..'*.lua','LUA')) do
 		AddCSLuaFile(path..fn)
 	end
-	local path = 'vstruct/vstruct/'
+	local path = 'vstruct/'
 	for _,fn in next,(file.Find(path..'*.lua','LUA')) do
 		if fn~="test.lua" and fn~="compat1x.lua" then
 			AddCSLuaFile(path..fn)
@@ -116,9 +116,9 @@ env.require = function(what)
 		func = package.preload[what]
 	else
 		
-		local path = "vstruct/"..what:gsub("%.","/")..'.lua'
+		local path = ""..what:gsub("%.","/")..'.lua'
 		if not G.file.Exists(path,MENU_DLL and 'LuaMenu' or 'LUA') then
-			path = "vstruct/"..what:gsub("%.","/")..'/init.lua'
+			path = ""..what:gsub("%.","/")..'/init.lua'
 		end
 	
 		func = G.CompileFile(path,false)
@@ -156,7 +156,7 @@ require'vstruct'
 G.vstruct=package.loaded.vstruct
 G.package.loaded.vstruct=package.loaded.vstruct
 G.vstruct.SendToClients = SERVER and function()
-	local pf = 'vstruct/vstruct/'
+	local pf = 'vstruct/'
 	local fil,fold=file.Find('lua/'..pf.."*.*",'GAME')
 	for _,fil in next,fil do
 		if fil:find"%.lua$" then
